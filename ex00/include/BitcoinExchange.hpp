@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jschott <jschott@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jschott <jschott@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:54:34 by jschott           #+#    #+#             */
-/*   Updated: 2024/03/01 14:58:01 by jschott          ###   ########.fr       */
+/*   Updated: 2024/03/04 10:22:58 by jschott          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 class BitcoinExchange
 {
 private:
-	/* data */
+	int
 public:
 	BitcoinExchange();
 	BitcoinExchange(BitcoinExchange & origin);
