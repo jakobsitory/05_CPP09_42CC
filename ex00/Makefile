@@ -14,7 +14,8 @@ NAME = btc
 
 # SOURCES
 SRC_PATH =	src/
-SRC_FILES =	main.cpp
+SRC_FILES =	main.cpp \
+			BitcoinExchange.cpp
 SRCS := $(addprefix $(SRC_PATH), $(SRC_FILES))
 
 # OBJECTS
@@ -23,12 +24,12 @@ OBJS = $(addprefix $(OBJ_PATH), $(SRC_FILES:.cpp=.o))
 
 # INCLUDES
 INCL_PATH =	include/
-HDRS = 		BitCoinExchange.hpp
+HDRS = 		BitcoinExchange.hpp
 INCLDS := $(addprefix $(INCL_PATH), $(HDRS))
 
 # COMPILATION CMNDS
 CC = c++
-FT_FLAGS = -Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
+FT_FLAGS = -Wall -Wextra -Werror -std=c++11 -g -fsanitize=address
 INCLUDES = -I $(INCL_PATH)
 
 all: $(NAME)
