@@ -23,15 +23,51 @@
 #define COLOR_SUCCESS	"\033[92m"
 #define COLOR_FOCUS		"\e[35m"
 
+# define NANOSECOND		100000000
+# define MICROSECOND	100000
+# define MILLISECOND	100
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <deque>
+#include <climits>
+#include <cstdlib>
+#include <ctime>
+
 class PmergeMe
 {
 private:
-	/* data */
 public:
+	std::deque<int>		_queue;
+	std::vector<int>	_vect;
+	double				_runtime_queue;
+	double				_runtime_vect;
+
 	PmergeMe();
 	PmergeMe(PmergeMe & origin);
 	PmergeMe & operator=(PmergeMe & origin);
 	~PmergeMe();
+
+	int		validInput(std::string const str) const;
+	void	printVector();
+	void	printQueue();
+	void	sortVector();
+	void	sortQueue();
+
+	class InvalidInputFormException : public std::exception{
+		public:
+			virtual const char* what() const throw(){
+				return ("Error: Invalid input");
+			};
+	};
+	
+	class InvalidInputOutOfBounds : public std::exception{
+		public:
+			virtual const char* what() const throw(){
+				return ("Error: Input out of bounds");
+			};
+	};
 };
 
 #endif

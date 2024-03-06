@@ -14,7 +14,8 @@ NAME = PmergeMe
 
 # SOURCES
 SRC_PATH =	src/
-SRC_FILES =	main.cpp
+SRC_FILES =	main.cpp \
+			PmergeMe.cpp
 SRCS := $(addprefix $(SRC_PATH), $(SRC_FILES))
 
 # OBJECTS
