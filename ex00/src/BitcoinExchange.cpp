@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jschott <jschott@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jschott <jschott@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:54:42 by jschott           #+#    #+#             */
-/*   Updated: 2024/03/05 17:56:23 by jschott          ###   ########.fr       */
+/*   Updated: 2024/03/06 11:42:00 by jschott          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,46 +30,51 @@ BitcoinExchange::~BitcoinExchange(){
 	
 }
 
-time_t	validDate(std::string const &datestring){
-	int len = datestring.length();
+struct tm	validDate(std::string const &datestring){
+	std::string str = datestring;
+	str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
+	int len = str.length();
+//std::cout << "parsing " << str << " of len: " << len << std::endl;
 	if (len == 10 
-		&& (datestring[4] != '-' || datestring[7] != '-' ))
+		&& (str[4] != '-' || str[7] != '-' ))
 			throw BitcoinExchange::InvalidInputException();
 	else if (len == 11 
-				&& (datestring[0] != '-'
-				|| datestring[5] != '-' || datestring[8] != '-' ))
+				&& (str[0] != '-'
+				|| str[5] != '-' || str[8] != '-' ))
 		throw BitcoinExchange::InvalidInputException();
+
+//std::cout << "mydate: " << datestring.substr(0, len - 6).c_str() << datestring.substr(len - 5, 2).c_str() << datestring.substr(len - 2).c_str() << std::endl;
 
 	struct tm new_date;
 	new_date.tm_year = std::atoi(datestring.substr(0, len - 6).c_str()) - 1900;
-	if (new_date.tm_year ==  -1900 && datestring.substr(0, 4) != "0000" && datestring.substr(0, 5) != "-0000" )
+	if (new_date.tm_year <  0)
 		throw BitcoinExchange::InvalidInputDateException();
 	
-	new_date.tm_mon = std::atoi(datestring.substr(len - 5, 2).c_str());
+	new_date.tm_mon = std::atoi(datestring.substr(len - 5, 2).c_str()) - 1;
 	if (new_date.tm_mon < 0 || new_date.tm_mon > 11)
 		throw BitcoinExchange::InvalidInputDateException();	
-	new_date.tm_mday = std::atoi(datestring.substr(len - 5).c_str());
-	if (new_date.tm_mday >= 0 && new_date.tm_mday < 28)
-		return mktime(&new_date);
-	else if (new_date.tm_mday == 28 && (new_date.tm_mon != 1 || isLeapYear(new_date.tm_year)))
+	new_date.tm_mday = std::atoi(datestring.substr(len - 2).c_str());
+
+//std::cout << "mydate in validDate: " << new_date.tm_year << "-" << new_date.tm_mon << "-"  << new_date.tm_mday << std::endl;// 
+	if (new_date.tm_mday > 0 && new_date.tm_mday < 29)
+		return (new_date);
+	else if (new_date.tm_mday == 29 && (new_date.tm_mon == 1 && !isLeapYear(new_date.tm_year)))
 		throw BitcoinExchange::InvalidInputDateException();
-	else if (new_date.tm_mday > 30 || (new_date.tm_mday == 30 
+	else if (new_date.tm_mday > 31 || (new_date.tm_mday == 31 
 				&&	(new_date.tm_mon == 3
 					|| new_date.tm_mon == 5 
 					|| new_date.tm_mon == 8 
 					|| new_date.tm_mon == 10)))
 		throw BitcoinExchange::InvalidInputDateException();
-	return mktime(&new_date);
+	return (new_date);
 }
 
 float	validValue(std::string const &valstring){
 	float		val;
-	char**	error = NULL;
+	char*	error = NULL;
 
-	val = strtof(valstring.c_str(), error);
-	// if (*error != "f")
-		// throw BitcoinExchange::InvalidInputValueException();
-	if ( val < 0 || val > 1000)
+	val = strtof(valstring.c_str(), &error);
+	if (*error != '\0')
 		throw BitcoinExchange::InvalidInputValueException();
 	return val;	
 }
@@ -92,8 +97,15 @@ void	BitcoinExchange::parseDatabase(std::string filename){
 	}
 }
 
+void BitcoinExchange::printDatabase() const {
+		std::map<time_t, float>::const_iterator it;
+		for (it = _database.begin(); it != _database.end(); ++it) {
+			std::cout << date2string(it->first) << ", " << it->second << std::endl;
+		}
+}
+
 void BitcoinExchange::addValidLine(std::string str, char delimiter) {
-	std::remove_if(str.begin(), str.end(), isspace);
+	str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
 	if (str == "")
 		return ;
 	if (str.length() < 12)
@@ -104,7 +116,9 @@ void BitcoinExchange::addValidLine(std::string str, char delimiter) {
 		throw BitcoinExchange::InvalidInputValueException();
 	
 	try	{
-		time_t new_date = validDate(str.substr(0, pos));
+		struct tm new_date_tm = validDate(str.substr(0, pos));
+		time_t new_date = mktime(&new_date_tm);
+		//std::cout << "mydate converted: " << new_date.tm_year << new_date.tm_mon << new_date.tm_mday << std::endl;// 
 		float val = validValue(str.substr(pos + 1));
 		std::pair<time_t, float> keyval(new_date, val);
 		this->_database.insert(keyval);
@@ -113,8 +127,58 @@ void BitcoinExchange::addValidLine(std::string str, char delimiter) {
 		std::cerr << COLOR_ERROR <<e.what() << ": " << str << COLOR_STANDARD << std::endl;
 	}
 }
+
+void	BitcoinExchange::getValidExcangeRate(std::string filename){
+	std::ifstream file(filename.c_str());
+	
+	if (!file.is_open())
+		throw BitcoinExchange::InvalidInputFile();
+	
+	std::string line;
+	char delimiter;
+	try	{
+		std::getline(file, line);
+		delimiter = findDelimiter(line);
+	}
+	catch(const std::exception& e){
+		std::cerr << COLOR_ERROR <<e.what() << COLOR_STANDARD << std::endl;
+	}
+	
+	std::pair<time_t, float> keyval;
+	size_t pos;
+	while (std::getline(file, line)){
+		try
+		{
+			pos = line.find(delimiter);
+			if (pos == std::string::npos)
+			 continue ;
+			struct tm new_date_tm = validDate(line.substr(0, pos));
+			keyval.first = mktime(&new_date_tm);
+			keyval.second  = validValue(line.substr(pos + 1));
+			if (keyval.second < 0 || keyval.second > 1000)
+				throw BitcoinExchange::InvalidInputValueException();
+			std::map<time_t, float>::iterator it = this->_database.find(keyval.first);
+			if (it != this->_database.end()){
+				std::cout << date2string(keyval.first) << " => " << keyval.second << " * " << it->second <<" =\t" << keyval.second * it->second << std::endl;
+			}
+			else {
+				it = this->_database.upper_bound(keyval.first);
+				if (it != this->_database.end()){
+					std::cout << date2string(keyval.first) << " => " << keyval.second << " * " << it->second <<" =\t" << keyval.second * it->second << std::endl;
+				}
+				else
+					std::cout << "Having Issues Here" << std::endl;
+			}
+		}
+		catch(const std::exception& e) {
+			std::cerr << COLOR_ERROR <<e.what() << ": " << line << COLOR_STANDARD << std::endl;
+		}
+	}
+	file.close();
+}
+
 char findDelimiter(std::string &str){
-	std::remove_if(str.begin(), str.end(), isspace);
+	str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
 	if (str.length() < 6
 		|| str.substr(0, 4) != "date")
 			throw BitcoinExchange::InvalidInputFormException();
@@ -131,4 +195,11 @@ bool isLeapYear(int year) {
     } else {
         return true;
     }
+}
+
+std::string	 date2string(time_t date){
+	struct tm* timeinfo = localtime(&(date));
+	char buffer[80];
+	strftime(buffer, 80, "%Y-%m-%d", timeinfo);
+	return buffer;
 }

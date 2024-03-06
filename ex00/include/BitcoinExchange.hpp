@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jschott <jschott@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jschott <jschott@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:54:34 by jschott           #+#    #+#             */
-/*   Updated: 2024/03/05 17:59:08 by jschott          ###   ########.fr       */
+/*   Updated: 2024/03/06 10:58:28 by jschott          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,8 @@ public:
 
 	void	parseDatabase(std::string filename);
 	void	addValidLine(std::string str, char delimiter);
-//DEBUGGING REMOVE!	
-	void printDatabase() const {
-    for (const auto& pair : _database) {
-        struct tm* timeinfo = localtime(&pair.first);
-        char buffer[80];
-        strftime(buffer, 80, "%Y-%m-%d", timeinfo);
-        std::cout << buffer << ", " << pair.second << std::endl;
-    }
-}
+	void	getValidExcangeRate(std::string filename);
+	void 	printDatabase() const;
 
 	
 	class InvalidInputException : public std::exception{
@@ -85,6 +78,13 @@ public:
 				};
 	};
 
+	class InvalidInputFile : public std::exception{
+			public:
+				virtual const char* what() const throw(){
+					return ("Error: Cannot open input file");
+				};
+	};
+
 	class DatabaseException : public std::exception{
 			public:
 				virtual const char* what() const throw(){
@@ -95,9 +95,11 @@ public:
 };
 
 // Verify Input Data
-char 		findDelimiter(std::string &str);
-time_t		validDate(std::string const &datestring);
-float		validVal(std::string const &valstring);
-bool		isLeapYear(int year);
+std::pair<time_t, float>	splitDateVal(std::string str, char delimiter);
+char 						findDelimiter(std::string &str);
+struct tm					validDate(std::string const &datestring);
+float						validVal(std::string const &valstring);
+bool						isLeapYear(int year);
+std::string					date2string(time_t date);
 
 #endif
