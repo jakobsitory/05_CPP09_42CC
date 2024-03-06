@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jschott <jschott@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jschott <jschott@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:55:40 by jschott           #+#    #+#             */
-/*   Updated: 2024/03/05 10:15:26 by jschott          ###   ########.fr       */
+/*   Updated: 2024/03/06 16:57:12 by jschott          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,42 @@
 #define COLOR_SUCCESS	"\033[92m"
 #define COLOR_FOCUS		"\e[35m"
 
+#include <iostream>
+#include <string>
+#include <stack>
+#include <cstring>
+#include <cstdlib>
+
 class RPN
 {
 private:
-	
+    std::stack<int> 	_vals;
+
+	std::string	const	_digits;
+	std::string	const	_operations;
 public:
 	RPN();
 	RPN(RPN & origin);
 	RPN & operator=(RPN & origin);
 	~RPN();
+	
+
+	bool	validInput(std::string const str) const;
+	void	calculate(int num_l, int num_r, char op);
+	int		sequenceRPN(std::string const str);
+
+	class InvalidInputFormException : public std::exception{
+			public:
+				virtual const char* what() const throw(){
+					return ("Error: Invalid input");
+				};
+	};
+	class InvalidOperation : public std::exception{
+			public:
+				virtual const char* what() const throw(){
+					return ("Error: Invalid Operation");
+				};
+	};
 };
 
 #endif

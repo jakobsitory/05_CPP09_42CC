@@ -14,7 +14,8 @@ NAME = RPN
 
 # SOURCES
 SRC_PATH =	src/
-SRC_FILES =	main.cpp
+SRC_FILES =	main.cpp \
+			RPN.cpp
 SRCS := $(addprefix $(SRC_PATH), $(SRC_FILES))
 
 # OBJECTS

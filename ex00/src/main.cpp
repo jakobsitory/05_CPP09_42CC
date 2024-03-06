@@ -6,7 +6,7 @@
 /*   By: jschott <jschott@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:54:53 by jschott           #+#    #+#             */
-/*   Updated: 2024/03/06 12:47:34 by jschott          ###   ########.fr       */
+/*   Updated: 2024/03/06 13:31:03 by jschott          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,5 @@ int main (int argc, char** argv){
 		std::cerr << COLOR_ERROR <<e.what() << COLOR_STANDARD << std::endl;
 		return (1);
 	}
-	
-	std::cout << std::endl;
-	//btc.printDatabase();
 	return 0;
 }
