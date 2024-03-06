@@ -6,7 +6,7 @@
 /*   By: jschott <jschott@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:54:53 by jschott           #+#    #+#             */
-/*   Updated: 2024/03/06 11:21:31 by jschott          ###   ########.fr       */
+/*   Updated: 2024/03/06 12:47:34 by jschott          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int main (int argc, char** argv){
 		return (1);
 	}
 	
-//	btc.printDatabase();
+	std::cout << std::endl;
+	//btc.printDatabase();
 	return 0;
 }
