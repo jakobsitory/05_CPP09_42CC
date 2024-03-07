@@ -34,6 +34,7 @@
 #include <climits>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 
 class PmergeMe
 {
@@ -50,10 +51,20 @@ public:
 	~PmergeMe();
 
 	int		validInput(std::string const str) const;
-	void	printVector();
-	void	printQueue();
-	void	sortVector();
-	void	sortQueue();
+	
+	//Vector Ops
+	void				printVector();
+	std::vector<int>	mergeVector(std::vector<int> &input_1, std::vector<int> &input_2);
+	std::vector<int>	mergeInsertVector(std::vector<int> &input);
+	void				sortVector();
+	std::string			isSortedVector();
+
+	//Deque Ops
+	void			printQueue();
+	std::deque<int> mergeQueue(std::deque<int> &input_1, std::deque<int> &input_2);
+	std::deque<int>	mergeInsertQueue(std::deque<int> &input);
+	void			sortQueue();
+	std::string		isSortedQueue();
 
 	class InvalidInputFormException : public std::exception{
 		public:
