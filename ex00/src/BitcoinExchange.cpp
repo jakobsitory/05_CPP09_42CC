@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jschott <jschott@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: jschott <jschott@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:54:42 by jschott           #+#    #+#             */
-/*   Updated: 2024/03/06 13:22:03 by jschott          ###   ########.fr       */
+/*   Updated: 2024/03/11 12:17:13 by jschott          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ float	validValue(std::string const &valstring){
 	float		val;
 	char*	error = NULL;
 
+	if (valstring == "")
+		throw BitcoinExchange::InvalidInputValueException();
 	val = strtof(valstring.c_str(), &error);
 	if (*error != '\0')
 		throw BitcoinExchange::InvalidInputValueException();
@@ -141,6 +143,7 @@ void	BitcoinExchange::getValidExcangeRate(std::string filename){
 	}
 	catch(const std::exception& e){
 		std::cerr << COLOR_ERROR <<e.what() << COLOR_STANDARD << std::endl;
+		return ;
 	}
 	
 	std::pair<time_t, float> keyval;
@@ -155,6 +158,8 @@ void	BitcoinExchange::getValidExcangeRate(std::string filename){
 		{
 			line.erase(std::remove_if(line.begin(), line.end(), isspace), line.end());
 			pos = line.find(delimiter);
+			if (pos == std::string::npos)
+				throw BitcoinExchange::InvalidInputFormException();
 			datestring = line.substr(0, pos);
 			valstring = line.substr(pos + 1);
 			struct tm new_date_tm = validDate(datestring);
@@ -162,7 +167,7 @@ void	BitcoinExchange::getValidExcangeRate(std::string filename){
 			keyval.second  = validValue(valstring);
 			time_t now;
 			time(&now);
-			if (keyval.first < this->_database.begin()->first || keyval.first > now)
+			if (keyval.first < this->_database.begin()->first || keyval.first > now || keyval.first > now)
 				throw BitcoinExchange::InvalidInputDateException();
 			if (keyval.second < 0 || keyval.second > 1000)
 				throw BitcoinExchange::InvalidInputValueException();
@@ -174,6 +179,9 @@ void	BitcoinExchange::getValidExcangeRate(std::string filename){
 				--it;
 				std::cout << date2string(keyval.first) << " => " << keyval.second << " = " << keyval.second * it->second << std::endl;
 			}
+		}
+		catch(const BitcoinExchange::DateExceedsDatabaseException& e) {
+			std::cerr << COLOR_ERROR <<e.what() << " of " << _database.begin()->first << " to " << _database.end()->first << ": " << datestring << COLOR_STANDARD << std::endl;
 		}
 		catch(const BitcoinExchange::InvalidInputValueException& e) {
 			std::cerr << COLOR_ERROR <<e.what() << ": " << valstring << COLOR_STANDARD << std::endl;

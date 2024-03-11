@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jschott <jschott@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: jschott <jschott@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:54:34 by jschott           #+#    #+#             */
-/*   Updated: 2024/03/06 10:58:28 by jschott          ###   ########.fr       */
+/*   Updated: 2024/03/11 12:07:26 by jschott          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ public:
 	class InvalidInputValueException : public std::exception{
 			public:
 				virtual const char* what() const throw(){
-					return ("Error: Input value out of bounds (0 - 1000)");
+					return ("Error: Invalid value (0 - 1000)");
 				};
 	};
 
@@ -82,6 +82,13 @@ public:
 			public:
 				virtual const char* what() const throw(){
 					return ("Error: Cannot open input file");
+				};
+	};
+
+	class DateExceedsDatabaseException : public std::exception{
+			public:
+				virtual const char* what() const throw(){
+					return ("Error: Date exceeds limits of database");
 				};
 	};
 

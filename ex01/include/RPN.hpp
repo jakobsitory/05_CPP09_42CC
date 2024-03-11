@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jschott <jschott@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: jschott <jschott@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:55:40 by jschott           #+#    #+#             */
-/*   Updated: 2024/03/06 16:57:12 by jschott          ###   ########.fr       */
+/*   Updated: 2024/03/11 12:20:29 by jschott          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RPN_HPP
-# define _HPP
+# define RPN_HPP
 
 #define TEXT_NOFORMAT	"\e[0m"
 #define TEXT_BOLD		"\e[1m"
